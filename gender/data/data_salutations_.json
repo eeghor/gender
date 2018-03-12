@@ -1,0 +1,78 @@
+{
+  "common": {
+    "m": [
+      "mr",
+      "sir",
+      "mister"
+    ],
+    "f": [
+      "mrs",
+      "ms",
+      "miss"
+    ],
+    "u": [
+      "dr",
+      "doctor",
+      "prof",
+      "professor"
+    ]
+  },
+  "uncommon": {
+    "m": [
+      "hr",
+      "herr",
+      "dhr",
+      "senor",
+      "admiral",
+      "ambassador",
+      "baron",
+      "capt",
+      "col",
+      "commander",
+      "congressman",
+      "count",
+      "consul",
+      "datuk",
+      "dato",
+      "dean",
+      "governor",
+      "rabbi",
+      "reverend",
+      "senator",
+      "sergeant",
+      "sheikh",
+      "sultan",
+      "viscount",
+      "esq",
+      "brother",
+      "father",
+      "major",
+      "lieutenant",
+      "don",
+      "d",
+      "prince"
+    ],
+    "f": [
+      "frau",
+      "fr",
+      "fraulein",
+      "senora",
+      "sra",
+      "barones",
+      "dra",
+      "madame",
+      "mme",
+      "mademoiselle",
+      "mlle",
+      "mevrouw",
+      "mw",
+      "viscountess",
+      "dame",
+      "princess"
+    ],
+    "u": [
+      "md",
+      "hon"
+    ]
+  }
+}
