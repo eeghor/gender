@@ -1,6 +1,7 @@
 import json
 from unidecode import unidecode
 from string import ascii_lowercase
+import os
 
 class Person:
 	pass
@@ -11,10 +12,10 @@ class GenderDetector:
 	figure out a customer's gender from her name, self-reported salutation or email address
 	"""
 
-	name_db, title_db, hypoc_db, grammg_db = [json.load(open(f,'r')) for f in ['data/data_names_.json', 
-																	 		   'data/data_salutations_.json', 
-																	 		   'data/data_hypocorisms_.json',
-																	 		   'data/data_grammgender_.json']]
+	name_db, title_db, hypoc_db, grammg_db = [json.load(open(f,'r')) for f in [os.path.join(os.path.dirname(__file__),'data/data_names_.json'), 
+																	 		   os.path.join(os.path.dirname(__file__),'data/data_salutations_.json'), 
+																	 		   os.path.join(os.path.dirname(__file__),'data/data_hypocorisms_.json'),
+																	 		   os.path.join(os.path.dirname(__file__),'data/data_grammgender_.json')]]
 
 	info = f'dictionaries: {len(name_db)} names, {len(hypoc_db)} hypocorisms, {len(grammg_db)} grammatical gender words'
 																	 
