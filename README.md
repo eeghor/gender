@@ -14,7 +14,7 @@ Have a name and possibly an email address and wondering whether it’s a male or
 `pip3 install gender`
 
 ### Quickstart
-Import and initialize the GenderDetector class:
+Import and initialise the GenderDetector class:
 
 ```
 from gender import GenderDetector
@@ -34,3 +34,9 @@ Having an email address could make difference. Suppose that you want to figure o
 customer_info = 'b w roberts -- roboking@yahoo.co.uk'
 ```
 Both the initials and surname don’t tell you whether this is a male or a female. However, the email prefix robo*king* does look like it’s probably a male because the word *king* always points to a male.
+
+Also note that you can feed a **list**  into the **gender** method in which case you will get a list of identified genders as an output:
+```
+gd.gender(['steve risotto', 'ana kowalski'])
+>> ['m', 'f']
+```
