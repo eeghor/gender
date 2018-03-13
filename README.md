@@ -9,3 +9,18 @@ Have a name and possibly an email address and wondering whether it’s a male or
 * Covers [hypocorisms](https://en.wikipedia.org/wiki/Hypocorism) (English only at this time)
 * Makes use of a person’s email address (if available) via searching for names and [grammatical gender](https://en.wikipedia.org/wiki/Grammatical_gender) words in the prefix
 * Doesn’t care if the input has bad formatting
+
+### Installation
+`pip3 install gender`
+
+### Quickstart
+Import and initialize the GenderDetector class:
+`from gender import GenderDetector
+gd = GenderDetector()`
+Then use its *gender* method:
+`gd.gender('jaeden collins')`
+Note that you can give it a string with some rubbish in it, like
+`gd.gender('dr.. arian ChiA ,%%%achia58@hotmail.com')`
+Having an email address could make difference. Suppose that you want to figure out gender of someone whose description is 
+`customer_info = 'b w roberts -- roboking@yahoo.co.uk'`
+Both the initials and surname don’t tell you whether this is a male or a female. However, the email prefix robo*king* does look like it’s probably a male because the word *king* always points to a male.
