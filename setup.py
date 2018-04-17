@@ -5,7 +5,7 @@ def get_long_description():
     return open(os.path.join(os.path.dirname(__file__), "README.rst")).read()
 
 setup(name='gender',
-      version='0.0.11',
+      version='0.0.12',
       description='Get gender from name and email address',
       long_description=get_long_description(),
       classifiers=[

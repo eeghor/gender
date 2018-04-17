@@ -95,6 +95,10 @@ class GenderDetector:
 
 		self.name_gender = None
 
+		if not self.name:
+			self.name_gender = None
+			return self
+
 		nameparts = {_ for w in self.name.split() for _ in w.split('-')}
 
 		_ = self._longest_common(nameparts, set(self.name_db) | set(self.hypoc_db))
@@ -119,6 +123,7 @@ class GenderDetector:
 		self.email_gender = None
 
 		if not self.email:
+			self.email_gender = None
 			return self
 		
 		# find any names in the email prefix; ONLY those separated by _, - or . count
