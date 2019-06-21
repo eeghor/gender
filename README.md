@@ -10,6 +10,10 @@ Have a name and possibly an email address and wondering whether it’s a male or
 * Makes use of a person’s email address (if available) via searching for names and [grammatical gender](https://en.wikipedia.org/wiki/Grammatical_gender) words in the prefix
 * Doesn’t care if the input has bad formatting
 
+### Latest Update (21/06/2019)
+* added 1,155 new names (now 133,987 names in the database)
+* added many new hypocorism 
+
 ### Installation
 `pip3 install gender`
 
