@@ -5,7 +5,7 @@ import os
 #     return open(os.path.join(os.path.dirname(__file__), "README.rst")).read()
 
 setup(name='gender',
-      version='0.0.13',
+      version='0.0.14',
       description='Get gender from name and email address',
       long_description='gender from name or email',
       classifiers=[

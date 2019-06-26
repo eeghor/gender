@@ -1,5 +1,6 @@
 # gender
-Have a name and possibly an email address and wondering whether it’s a male or a female? This package gives you the answer. 
+
+Have a name and possibly an email address and wondering whether it’s a male or a female? This package gives you the answer. For any input you get one of three labels: *m* (male), *f* (female) or *u* (unisex)
 
 ### Key Advantages
 
@@ -10,14 +11,22 @@ Have a name and possibly an email address and wondering whether it’s a male or
 * Makes use of a person’s email address (if available) via searching for names and [grammatical gender](https://en.wikipedia.org/wiki/Grammatical_gender) words in the prefix
 * Doesn’t care if the input has bad formatting
 
-### Latest Update (21/06/2019)
+### Latest Update (26/06/2019)
+
+* added 68 new Dutch names
+* updated gender for some names 
+
+### Previous Update (21/06/2019)
+
 * added 1,155 new names (now 133,987 names in the database)
 * added many new hypocorism 
 
 ### Installation
+
 `pip3 install gender`
 
 ### Quickstart
+
 Import and initialise the GenderDetector class:
 
 ```
@@ -33,7 +42,7 @@ Note that you can give it a string with some rubbish in it, like
 ```
 gd.gender('dr.. arian ChiA ,%%%achia58@hotmail.com')
 ```
-Having an email address could make difference. Suppose that you want to figure out gender of someone whose description is 
+Having an email address could make a difference. Suppose that you want to figure out gender of someone whose description is 
 ```
 customer_info = 'b w roberts -- roboking@yahoo.co.uk'
 ```
