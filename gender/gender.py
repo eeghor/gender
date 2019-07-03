@@ -2,6 +2,88 @@ import json
 from unidecode import unidecode
 from string import ascii_lowercase
 import os
+import re
+from collections import defaultdict
+
+from typing import NamedTuple
+
+# when the ASCII flag is used, \w is [a-zA-Z0-9_]
+email_exp = re.compile(r'^[a-z]+[\w\.\-]+[a-z0-9]+\@{1}[a-z0-9]+[\w\.]+[a-z]$', flags=re.ASCII)
+
+saluts = json.load(open('data/data_salutations_.json'))
+first_names = json.load(open('data/data_names_.json'))
+
+class Customer(NamedTuple):
+
+	title: str
+	first_name: str
+	last_name: str
+	email: str
+
+	@classmethod
+	def from_string(cls, st):
+
+		title = None
+		first_name = None
+		last_name = None
+		email = None
+
+		st_ = str(st).lower().strip()
+
+		# try to find the email address first
+		noemail_ = []
+
+		for _ in st_.split():
+			try:
+				email = re.search(email_exp, _).group(0)
+			except:
+				pass
+			if not email:
+				noemail_.append(_)
+
+		# what's not an email address goes in here;
+		# replace any non-white space separators with white spaces
+		# and then replace all non-single white spaces with a single one
+		st_ = re.sub(r'\s+', ' ', re.sub(r'[\.\,\-\_]', ' ', ' '.join(noemail_)))
+
+		# try to find salutation
+
+		def find_title(s):
+
+			for type_ in 'common uncommon'.split():
+				for g in saluts[type_]:
+					tt_ = set(saluts[type_][g]) & set(s.split())
+					if tt_:
+						return tt_.pop()
+
+		title = find_title(st_)
+
+		if title:
+			st_ = ' '.join([c for c in [re.sub(r'[^' + ascii_lowercase + r']', '', _).strip() 
+												for _ in st_.split() if _ != title] if c])
+		
+		# now to the first name; assume that first name is more likely to stand before the last name
+		fnms = []
+		for _ in st_.split():
+			if _ in first_names:
+				if first_names[_] in 'm f'.split():
+					first_name = _
+					break
+				else:
+					# it's a unisex name, add to candidates
+					fnms.append(_)
+
+		if (not first_name) and fnms:
+			first_name = fnms.pop()
+
+		if first_name:
+			st_ = ' '.join([_ for _ in st_.split() if _ != first_name]).strip()
+
+		# what's the last name then? assume it's more likely to come last
+		if st_:
+			last_name = st_.split().pop()
+
+		return cls(title=title, first_name=first_name,  last_name=last_name, email=email)
 
 class Person:
 	pass
@@ -12,16 +94,23 @@ class GenderDetector:
 	figure out a customer's gender from her name, self-reported salutation or email address
 	"""
 
-	name_db, title_db, hypoc_db, grammg_db = [json.load(open(f,'r')) for f in [os.path.join(os.path.dirname(__file__),'data/data_names_.json'), 
-																	 		   os.path.join(os.path.dirname(__file__),'data/data_salutations_.json'), 
-																	 		   os.path.join(os.path.dirname(__file__),'data/data_hypocorisms_.json'),
-																	 		   os.path.join(os.path.dirname(__file__),'data/data_grammgender_.json')]]
+	DATA = defaultdict()
 
-	info = f'dictionaries: {len(name_db)} names, {len(hypoc_db)} hypocorisms, {len(grammg_db)} grammatical gender words'
+	DATA['name_db'], DATA['title_db'], DATA['hypoc_db'], DATA['grammg_db'] = \
+				[json.load(open(f,'r')) for f in [os.path.join(os.path.dirname(__file__),'data/data_names_.json'), 
+				 								  os.path.join(os.path.dirname(__file__),'data/data_salutations_.json'), 
+				 								  os.path.join(os.path.dirname(__file__),'data/data_hypocorisms_.json'),
+				 								  os.path.join(os.path.dirname(__file__),'data/data_grammgender_.json')]]
+
+	info = f'dictionaries: {len(DATA["grammg_db"]):,} names, {len(DATA["grammg_db"]):,} hypocorisms, {len(DATA["grammg_db"]):,} grammatical gender words'
 																	 
 	def __init__(self, priority='name'):
 
-		self.title_gender = self.name_gender = self.email_gender = likely_gender = None
+		self.title_gender = None
+		self.name_gender = None
+		self.email_gender = None
+		likely_gender = None
+
 		self.PRIORITY = priority
 
 
@@ -77,7 +166,7 @@ class GenderDetector:
 		self.title_gender = None
 	
 		for g in 'm f'.split():
-			if self.title and (self.title.lower() in self.title_db['common'][g] + self.title_db['uncommon'][g]):
+			if self.title and (self.title.lower() in self.GenderDetector.DATA['grammg_db']['title_db']['common'][g] + self.GenderDetector.DATA['grammg_db']['title_db']['uncommon'][g]):
 				self.title_gender = g
 
 		return self
@@ -101,18 +190,18 @@ class GenderDetector:
 
 		nameparts = {_ for w in self.name.split() for _ in w.split('-')}
 
-		_ = self._longest_common(nameparts, set(self.name_db) | set(self.hypoc_db))
+		_ = self._longest_common(nameparts, set(self.GenderDetector.DATA['grammg_db']['name_db']) | set(self.GenderDetector.DATA['grammg_db']['hypoc_db']))
 
 		if not _:
 			return self
 
-		if _ in self.name_db:
-			self.name_gender = self.name_db[_]
+		if _ in self.GenderDetector.DATA['grammg_db']['name_db']:
+			self.name_gender = self.GenderDetector.DATA['grammg_db']['name_db'][_]
 		else:
 			# find what names corresp.to hypocorism and are in the name database
-			_ = self._longest_common(set(self.hypoc_db[_]), set(self.name_db))
-			if _ and (self.name_db[_] != 'u'):
-				self.name_gender = self.name_db[_]
+			_ = self._longest_common(set(self.GenderDetector.DATA['grammg_db']['hypoc_db'][_]), set(self.GenderDetector.DATA['grammg_db']['name_db']))
+			if _ and (self.GenderDetector.DATA['grammg_db']['name_db'][_] != 'u'):
+				self.name_gender = self.GenderDetector.DATA['grammg_db']['name_db'][_]
 		if self.name_gender not in 'm f'.split():
 			self.name_gender = None
 		
@@ -131,24 +220,24 @@ class GenderDetector:
 										for v in w.split('.') 
 											for q in v.split('-') if q.strip())
 
-		_ = self._longest_common(emailparts, set(self.name_db))
+		_ = self._longest_common(emailparts, set(self.GenderDetector.DATA['grammg_db']['name_db']))
 
-		if _ and (self.name_db[_] != 'u'):
-			self.email_gender = self.name_db[_]
+		if _ and (self.GenderDetector.DATA['grammg_db']['name_db'][_] != 'u'):
+			self.email_gender = self.GenderDetector.DATA['grammg_db']['name_db'][_]
 			return self
 
-		_ = self._longest_common(emailparts, set(self.hypoc_db))
+		_ = self._longest_common(emailparts, set(self.GenderDetector.DATA['grammg_db']['hypoc_db']))
 
-		if _ and (_ in self.name_db) and (self.name_db[_]!= 'u'):
-			self.email_gender = self.name_db[longest_hyp]
+		if _ and (_ in self.GenderDetector.DATA['grammg_db']['name_db']) and (self.GenderDetector.DATA['grammg_db']['name_db'][_]!= 'u'):
+			self.email_gender = self.GenderDetector.DATA['grammg_db']['name_db'][longest_hyp]
 			return self
 
 		# last resort: grammatical gender
 
-		_ = self._longest_common(emailparts, set(self.grammg_db))
+		_ = self._longest_common(emailparts, set(self.GenderDetector.DATA['grammg_db']['grammg_db']))
 
 		if _:
-			self.email_gender = self.grammg_db[_]
+			self.email_gender = self.GenderDetector.DATA['grammg_db']['grammg_db'][_]
 
 		return self
 
@@ -207,7 +296,7 @@ class GenderDetector:
 
 		# find possible title matches
 		_titles = ({self._keep_letters(_) for _ in s.split() if '@' not in _} & 
-					{t for l in [self.title_db['common'][g] + self.title_db['uncommon'][g] 
+					{t for l in [self.GenderDetector.DATA['grammg_db']['title_db']['common'][g] + self.GenderDetector.DATA['grammg_db']['title_db']['uncommon'][g] 
 							for g in 'm f u'.split()] for t in l})
 		
 		title = max(_titles, key=len) if _titles else None
