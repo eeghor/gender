@@ -21,6 +21,7 @@ class Customer(NamedTuple):
 	first_name: str
 	last_name: str
 	email: str
+	gender: str
 
 	@classmethod
 	def from_string(cls, st):
@@ -40,7 +41,7 @@ class Customer(NamedTuple):
 				pass
 
 		if email:
-			st_ = ' '.join(st_.split(email))
+			st_ = ''.join(st_.split(email)[:-1])
 
 		st_ = re.sub(r'\s+', ' ', re.sub(r'[^' + ascii_lowercase + r']', ' ', st_)).strip()
 		
@@ -98,10 +99,6 @@ class GD:
 
 		self.GENDS = 'm f'.split()
 
-		self.g_title = None
-		self.g_name = None
-		self.g_email = None
-
 	def _from_title(self, title):
 
 		for g in self.GENDS:
@@ -115,10 +112,13 @@ class GD:
 
 		if first_name in hypocs:
 			gnds = {first_names[nm] for nm in (set(hypocs[first_name]) & set(first_names))}
-			return 'm' if not ({'m'} - gnds) else 'f' if not ({'f'} - gnds) else None
+			return 'm' if {'m'} == gnds else 'f' if {'f'} == gnds else None
 
 
 	def _from_email(self, email):
+
+		if not email:
+			return None
 
 		_email = re.split(r'[\s\-\.\_]', email.split('@')[0])
 
@@ -132,18 +132,44 @@ class GD:
 			if _g:
 				first_name_cands.add(_g)
 
-			if (_ in gramms) and (gramms[_] in self.GENDS):
-				gramm_cands.add(gramms[_])
+			for w in gramms:
+				if (w in _) and (gramms[w] in self.GENDS):
+					gramm_cands.add(gramms[w])
 
 		for s in [first_name_cands, gramm_cands]:
-			if not ({'m'} - s):
+			if {'m'} == s:
 				return 'm'
-			elif not ({'f'} - s):
+			elif {'f'} == s:
 				return 'f'
 
-	def get_gender(self, cust):
+	def get_gender(self, st):
 
-		self.g_title = self._from_title(cust.title)
+		cust = Customer.from_string(st)
+
+		g_title = self._from_title(cust.title)
+		g_name = self._from_first_name(cust.first_name)
+		g_email = self._from_email(cust.email)
+
+		if all([g_title, g_name, g_title == g_name]):
+			return cust._replace(gender=g_title)
+
+		if all([g_title, g_name, g_title != g_name, g_email]):
+			if g_email == g_title:
+				return cust._replace(gender=g_email)
+			elif g_email == g_name:
+				return cust._replace(gender=g_email)
+
+		if all([g_title, g_name, not g_email]):
+			return cust._replace(gender=g_title)
+
+		if all([not g_title, g_name]):
+			return cust._replace(gender=g_name)
+
+		if all([not g_title, not g_name, g_email]):
+			return cust._replace(gender=g_email)
+
+		return cust
+
 
 class Person:
 	pass
