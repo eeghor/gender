@@ -12,6 +12,8 @@ email_exp = re.compile(r'^[a-z]+[\w\.\-]+[a-z0-9]+\@{1}[a-z0-9]+[\w\.]+[a-z]$', 
 
 saluts = json.load(open('data/data_salutations_.json'))
 first_names = json.load(open('data/data_names_.json'))
+hypocs = json.load(open('data/data_hypocorisms_.json'))
+gramms = json.load(open('data/data_grammgender_.json'))
 
 class Customer(NamedTuple):
 
@@ -27,27 +29,22 @@ class Customer(NamedTuple):
 		first_name = None
 		last_name = None
 		email = None
+		gender = None
 
 		st_ = str(st).lower().strip()
-
-		# try to find the email address first
-		noemail_ = []
 
 		for _ in st_.split():
 			try:
 				email = re.search(email_exp, _).group(0)
 			except:
 				pass
-			if not email:
-				noemail_.append(_)
 
-		# what's not an email address goes in here;
-		# replace any non-white space separators with white spaces
-		# and then replace all non-single white spaces with a single one
-		st_ = re.sub(r'\s+', ' ', re.sub(r'[\.\,\-\_]', ' ', ' '.join(noemail_)))
+		if email:
+			st_ = ' '.join(st_.split(email))
 
+		st_ = re.sub(r'\s+', ' ', re.sub(r'[^' + ascii_lowercase + r']', ' ', st_)).strip()
+		
 		# try to find salutation
-
 		def find_title(s):
 
 			for type_ in 'common uncommon'.split():
@@ -59,8 +56,7 @@ class Customer(NamedTuple):
 		title = find_title(st_)
 
 		if title:
-			st_ = ' '.join([c for c in [re.sub(r'[^' + ascii_lowercase + r']', '', _).strip() 
-												for _ in st_.split() if _ != title] if c])
+			st_ = ' '.join([_ for _ in st_.split() if _ != title])
 		
 		# now to the first name; assume that first name is more likely to stand before the last name
 		fnms = []
@@ -75,15 +71,79 @@ class Customer(NamedTuple):
 
 		if (not first_name) and fnms:
 			first_name = fnms.pop()
+		elif (not first_name):
+			for _ in st_.split():
+				if _ in hypocs:
+					first_name = _
+					break
 
 		if first_name:
 			st_ = ' '.join([_ for _ in st_.split() if _ != first_name]).strip()
 
 		# what's the last name then? assume it's more likely to come last
 		if st_:
-			last_name = st_.split().pop()
+			wrds = st_.split()
+			if len(wrds) == 1:
+				last_name = wrds[-1]
+			elif wrds[-2] not in 'de los la van dos di der'.split():
+				last_name = wrds.pop()
+			else:
+				last_name = ' '.join(wrds[-2:])
 
-		return cls(title=title, first_name=first_name,  last_name=last_name, email=email)
+		return cls(title=title, first_name=first_name,  last_name=last_name, email=email, gender=gender)
+
+class GD:
+
+	def __init__(self):
+
+		self.GENDS = 'm f'.split()
+
+		self.g_title = None
+		self.g_name = None
+		self.g_email = None
+
+	def _from_title(self, title):
+
+		for g in self.GENDS:
+			if {title} & set(saluts['common'][g] + saluts['uncommon'][g]):
+				return g
+
+	def _from_first_name(self, first_name):
+
+		if (first_name in first_names) and (first_names[first_name] in self.GENDS):
+			return first_names[first_name]
+
+		if first_name in hypocs:
+			gnds = {first_names[nm] for nm in (set(hypocs[first_name]) & set(first_names))}
+			return 'm' if not ({'m'} - gnds) else 'f' if not ({'f'} - gnds) else None
+
+
+	def _from_email(self, email):
+
+		_email = re.split(r'[\s\-\.\_]', email.split('@')[0])
+
+		first_name_cands = set()
+		gramm_cands = set()
+
+		for _ in _email:
+
+			_g = self._from_first_name(_)
+
+			if _g:
+				first_name_cands.add(_g)
+
+			if (_ in gramms) and (gramms[_] in self.GENDS):
+				gramm_cands.add(gramms[_])
+
+		for s in [first_name_cands, gramm_cands]:
+			if not ({'m'} - s):
+				return 'm'
+			elif not ({'f'} - s):
+				return 'f'
+
+	def get_gender(self, cust):
+
+		self.g_title = self._from_title(cust.title)
 
 class Person:
 	pass
