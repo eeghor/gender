@@ -12,6 +12,7 @@ email_exp = re.compile(r'^[a-z]+[\w\.\-]+[a-z0-9]+\@{1}[a-z0-9]+[\w\.]+[a-z]$', 
 
 saluts = json.load(open(os.path.join(os.path.dirname(__file__),'data/data_salutations_.json')))
 fnames = json.load(open(os.path.join(os.path.dirname(__file__), 'data/data_names_.json')))
+lnames = [l.strip() for l in open(os.path.join(os.path.dirname(__file__), 'data/data_last_names_.txt')) if l.strip()]
 hypocs = json.load(open(os.path.join(os.path.dirname(__file__), 'data/data_hypocorisms_.json')))
 gramms = json.load(open(os.path.join(os.path.dirname(__file__),'data/data_grammgender_.json')))
 
@@ -84,10 +85,13 @@ class Person(NamedTuple):
 		# what's the last name then? assume it's more likely to come last
 		if st_:
 			wrds = st_.split()
-			if len(wrds) == 1:
+			known_lnames = set(lnames) & set(wrds)
+			if len(known_lnames) == 1:
+				last_name = known_lnames.pop()
+			elif len(wrds) == 1:
 				last_name = wrds[-1]
-			elif wrds[-2] not in 'de los la van dos di der'.split():
-				last_name = wrds.pop()
+			elif wrds[-2] not in 'al el de los la van dos di der'.split():
+				last_name = wrds[-1]
 			else:
 				last_name = ' '.join(wrds[-2:])
 
