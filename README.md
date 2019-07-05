@@ -1,11 +1,10 @@
 # gender
 
-Have a name and possibly an email address and wondering whether it’s a male or a female? This package gives you the answer. For any input you get one of three labels: *m* (male), *f* (female) or *u* (unisex)
+Have a name and possibly an email address and wondering whether it’s a male or a female? This package gives you the answer. 
 
 ### Key Advantages
 
 * Very simple to use
-* Accepts a single string or a list of strings as input
 * Relies on a dataset of 130,000+ unique names
 * Covers [hypocorisms](https://en.wikipedia.org/wiki/Hypocorism) (English only at this time)
 * Makes use of a person’s email address (if available) via searching for names and [grammatical gender](https://en.wikipedia.org/wiki/Grammatical_gender) words in the prefix
@@ -27,29 +26,12 @@ Have a name and possibly an email address and wondering whether it’s a male or
 
 ### Quickstart
 
-Import and initialise the GenderDetector class:
-
 ```
-from gender import GenderDetector
-gd = GenderDetector()
+import gender
+gd = gender.GenderDetector()
+gd.get_gender('jeroen van dijk')
 ```
-
-Then use its *gender* method:
+which gives you 
 ```
-gd.gender('jaeden collins')
-```
-Note that you can give it a string with some rubbish in it, like
-```
-gd.gender('dr.. arian ChiA ,%%%achia58@hotmail.com')
-```
-Having an email address could make a difference. Suppose that you want to figure out gender of someone whose description is 
-```
-customer_info = 'b w roberts -- roboking@yahoo.co.uk'
-```
-Both the initials and surname don’t tell you whether this is a male or a female. However, the email prefix robo*king* does look like it’s probably a male because the word *king* always points to a male.
-
-Also note that you can feed a **list**  into the **gender** method in which case you will get a list of identified genders as an output:
-```
-gd.gender(['steve risotto', 'ana kowalski'])
->> ['m', 'f']
+Person(title=None, first_name='jeroen', last_name='van dijk', email=None, gender='m')
 ```
