@@ -72,7 +72,7 @@ class Person(NamedTuple):
 					fnms.append(_)
 
 		if (not first_name) and fnms:
-			first_name = fnms.pop()
+			first_name = fnms[0]
 		elif (not first_name):
 			for _ in st_.split():
 				if _ in hypocs:
