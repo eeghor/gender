@@ -49,16 +49,17 @@ class Person(NamedTuple):
 		# try to find salutation
 		def find_title(s):
 
+			possible_titles = set()
+
 			for type_ in 'common uncommon'.split():
 				for g in saluts[type_]:
 					tt_ = set(saluts[type_][g]) & set(s.split())
 					if tt_:
-						return tt_.pop()
+						possible_titles |= tt_
 
-		title = find_title(st_)
+			return possible_titles
 
-		if title:
-			st_ = ' '.join([_ for _ in st_.split() if _ != title])
+		titles = find_title(st_)
 		
 		# now to the first name; assume that first name is more likely to stand before the last name
 		fnms = []
@@ -70,6 +71,15 @@ class Person(NamedTuple):
 				else:
 					# it's a unisex name, add to candidates
 					fnms.append(_)
+
+		# some names can be like titles, e.g. Dean
+		names_like_titles = set(fnms) & titles
+
+		if names_like_titles:
+			# priority to names
+			title = (titles - names_like_titles).pop()
+			first_name = names_like_titles.pop()
+			st_ = ' '.join([_ for _ in st_.split() if _ != title])
 
 		if (not first_name) and fnms:
 			first_name = fnms[0]
@@ -160,7 +170,7 @@ class GenderDetector:
 
 		if all([g_title, g_name, g_title == g_name]):
 			return cust._replace(gender=g_title)
-
+ 
 		if all([g_title, g_name, g_title != g_name, g_email]):
 			if g_email == g_title:
 				return cust._replace(gender=g_email)
