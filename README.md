@@ -5,12 +5,16 @@ Have a name and possibly an email address and wondering whether it’s a male or
 ### Key Advantages
 
 * Very simple to use
-* Relies on a dataset of 130,000+ unique names
+* Relies on a dataset of 135,000+ unique names
 * Covers [hypocorisms](https://en.wikipedia.org/wiki/Hypocorism) (English only at this time)
 * Makes use of a person’s email address (if available) via searching for names and [grammatical gender](https://en.wikipedia.org/wiki/Grammatical_gender) words in the prefix
 * Doesn’t care if the input has bad formatting
 
-### Latest Update (26/06/2019)
+### Latest Update (20/08/2019)
+
+* added 1,034 new male names from fifaindex.com - now the database contains 135,153 names
+
+### Previous Update (26/06/2019)
 
 * added 68 new Dutch names
 * updated gender for some names 
