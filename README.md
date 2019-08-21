@@ -10,9 +10,13 @@ Have a name and possibly an email address and wondering whether it’s a male or
 * Makes use of a person’s email address (if available) via searching for names and [grammatical gender](https://en.wikipedia.org/wiki/Grammatical_gender) words in the prefix
 * Doesn’t care if the input has bad formatting
 
-### Latest Update (20/08/2019)
+### Latest Update (21/08/2019)
 
-* added 1,034 new male names from fifaindex.com - now the database contains 135,153 names
+* added 14 new female names - now 135,167 names in the database
+
+### Previous Update (20/08/2019)
+
+* added 1,034 new male names from fifaindex.com
 
 ### Previous Update (26/06/2019)
 
