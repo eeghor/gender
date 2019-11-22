@@ -10,7 +10,11 @@ Have a name and possibly an email address and wondering whether it’s a male or
 * Makes use of a person’s email address (if available) via searching for names and [grammatical gender](https://en.wikipedia.org/wiki/Grammatical_gender) words in the prefix
 * Doesn’t care if the input has bad formatting
 
-### Latest Update (21/08/2019)
+### Latest Update (22/11/2019)
+
+* more new names, mostly variations of spelling - now 135,269 names in the database
+
+### Previous Update (21/08/2019)
 
 * added 14 new female names - now 135,167 names in the database
 
