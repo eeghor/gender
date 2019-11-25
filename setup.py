@@ -2,7 +2,7 @@ from setuptools import setup
 import os
 
 setup(name='gender',
-      version='0.0.24',
+      version='0.0.25',
       description='Get gender from name and email address',
       long_description='gender from name or email',
       classifiers=[
