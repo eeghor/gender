@@ -5,12 +5,16 @@ Have a name and possibly an email address and wondering whether it’s a male or
 ### Key Advantages
 
 * Very simple to use
-* Relies on a dataset of 135,000+ unique names
+* Relies on a dataset of 144,000+ unique names
 * Covers [hypocorisms](https://en.wikipedia.org/wiki/Hypocorism) (English only at this time)
 * Makes use of a person’s email address (if available) via searching for names and [grammatical gender](https://en.wikipedia.org/wiki/Grammatical_gender) words in the prefix
 * Doesn’t care if the input has bad formatting
 
-### Latest Update (22/11/2019)
+### Latest Update (26/07/2020)
+
+* added new male names, now 144,047 names in the database
+
+### Previous Update (22/11/2019)
 
 * more new names, mostly variations of spelling - now 135,269 names in the database
 
